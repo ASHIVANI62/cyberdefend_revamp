@@ -24,7 +24,7 @@ The three domain builds deliberately link across the final domains. Before domai
 
 ## Current implementation
 - Static pre-rendered HTML; no framework runtime; Manrope fonts are self-hosted.
-- Contact form composes an email in the visitor's email app. It does not store submissions or send email from a backend. The UI says this explicitly. If you want a web-submitted enquiry workflow, implement Netlify Forms or another agreed backend, update the privacy notice, configure notifications and verify receipt.
+- Contact form posts through a Netlify function to Google Apps Script and a private Google Sheet. Complete `docs/CONTACT-SETUP.md` before accepting live enquiries. Success is shown only after a confirmed save; failures retain entered details.
 - Office directions use the supplied share.google link. The resolved address was not available (HTTP 429); no guessed street address is displayed.
 - Social destinations come from the visible-footer link data in the existing sites' JavaScript bundles. Reachability and account ownership were not independently authenticated.
 - Certification offers use quote requests. Add named products/prices only after checking current issuer terms and business authority.
@@ -32,7 +32,7 @@ The three domain builds deliberately link across the final domains. Before domai
 ## Before production
 Confirm the service catalogue, training availability and internship terms. Review the concise privacy and website-information pages with the business owner; these describe the implemented enquiry flow and do not substitute for service contracts, purchase terms or a comprehensive business privacy policy.
 
-Test real devices and keyboard navigation, mobile menu, learning filters, email-app behaviour, the office link, all social links and cross-domain navigation. Audit rendered accessibility and measure performance after deployment. Automated build checks are not a full accessibility certification. No live browser audit was possible in this build environment.
+Test real devices and keyboard navigation, mobile menu, learning filters, form submission and confirmed receipt, the office link, all social links and cross-domain navigation. Audit rendered accessibility and measure performance after deployment. Automated build checks are not a full accessibility certification. No live browser audit was possible in this build environment.
 
 Legacy routes identified in the previous sites are covered by `src/data/redirects.json` and retained course/article pages. Automated checks cover 44 redirect cases including query preservation. Add any further URLs found in Search Console or access logs before migration. Unknown URLs return a genuine 404; there is no blanket home-page redirect. Keep permanent redirects for at least a year and preferably indefinitely.
 
