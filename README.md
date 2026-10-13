@@ -1,6 +1,6 @@
 # cyberdefend_revamp
 
-A new light-theme, multi-domain website: 24 content pages (21 indexable URLs), shared brand system, static HTML, responsive navigation, learning-area filters and an email enquiry composer. No founder profiles. The revised shield and naturally proportioned wordmark are used throughout. The homepage has a new editorial layout and the Manrope typeface is self-hosted.
+A new light-theme, multi-domain website: 24 content pages (21 indexable URLs), shared brand system, static HTML, responsive navigation, learning-area filters and a direct enquiry form with a Google Sheets integration. No founder profiles. The revised shield and naturally proportioned wordmark are used throughout. The homepage has a new editorial layout and the Manrope typeface is self-hosted.
 
 ## Start
 Requires Node 22 or later. No dependency installation is needed.
@@ -27,6 +27,6 @@ Open http://127.0.0.1:4173. `npm run build` creates `dist/preview` (all pages in
 - `docs/CONTENT-SOURCES.md`: verified inputs and remaining business checks
 
 ## Content and deployment status
-This is a complete first website implementation, ready for content review and connected deployment. It is not a live deployment. Certification prices and course intake dates are intentionally enquiry-led. The email composer does not send on the user's behalf. Existing social URLs are carried over; office directions use the supplied link. No founder details or invented testimonials are included.
+This is a complete first website implementation, ready for content review and connected deployment. It is not a live deployment. Certification prices and course intake dates are intentionally enquiry-led. The form uses a Netlify function and Apps Script; Google deployment and server environment variables must be configured before enabling live submissions. See docs/CONTACT-SETUP.md. Existing social URLs are carried over; office directions use the supplied link. No founder details or invented testimonials are included.
 
 Default builds remain noindex. See deployment instructions before launch. Rendered browser/device QA and live performance checks remain outstanding.
