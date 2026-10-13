@@ -4,7 +4,27 @@ if(toggle&&nav){toggle.addEventListener('click',()=>{const open=toggle.getAttrib
 const filters=document.querySelectorAll('[data-filter]');
 filters.forEach(button=>button.addEventListener('click',()=>{filters.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));let count=0;document.querySelectorAll('[data-category]').forEach(card=>{const show=button.dataset.filter==='all'||card.dataset.category===button.dataset.filter;card.hidden=!show;if(show)count++;});document.querySelector('#filter-count').textContent=`${count} learning ${count===1?'area':'areas'}`;}));
 const form=document.querySelector('#enquiry-form');
-if(form){const wanted=new URLSearchParams(location.search).get('topic');const select=form.elements.topic;if(wanted&&[...select.options].some(o=>o.value===wanted))select.value=wanted;form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const data=new FormData(form);const subject='CyberDefend enquiry: '+data.get('topic');const body=`Hello CyberDefend,\n\nI am interested in ${data.get('topic')}.\n\nName: ${data.get('name')}\nEmail: ${data.get('email')}\nOrganisation / college: ${data.get('organisation')||'Not specified'}\n\n${data.get('message')}\n\nThank you.`;const href=`mailto:support@cyberdefend.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;const fallback=document.querySelector('#email-fallback');fallback.href=href;fallback.hidden=false;document.querySelector('#form-status').textContent='Your email draft is ready. Review and send it in your email app. If nothing opens, use the link below or email support@cyberdefend.in directly. Your enquiry has not been sent by this website.';location.href=href;});}
+if(form){
+ const wanted=new URLSearchParams(location.search).get('topic');
+ const select=form.elements.topic;
+ if(wanted&&[...select.options].some(o=>o.value===wanted))select.value=wanted;
+ let pending=false,requestId='',lastPayload='';
+ form.addEventListener('submit',async e=>{
+  e.preventDefault();if(pending||!form.reportValidity())return;
+  const data=Object.fromEntries(new FormData(form));
+  const payload=JSON.stringify(data);
+  if(payload!==lastPayload){requestId=crypto.randomUUID();lastPayload=payload;}
+  const status=document.querySelector('#form-status'),button=form.querySelector('[type="submit"]');
+  pending=true;button.disabled=true;button.textContent='Sending…';form.setAttribute('aria-busy','true');status.textContent='Sending your enquiry…';status.dataset.state='pending';
+  try{
+   const response=await fetch(form.action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,requestId}),signal:AbortSignal.timeout(25000)});
+   let result;try{result=await response.json();}catch{throw new Error(response.status===429?'Please wait a minute before trying again.':'We couldn’t confirm receipt. Please try again or email support@cyberdefend.in.');}
+   if(!response.ok||result.ok!==true||result.requestId!==requestId)throw new Error(result.message||'We couldn’t confirm receipt. Please try again.');
+   status.textContent=result.message;status.dataset.state='success';form.reset();requestId='';lastPayload='';
+  }catch(error){status.textContent=error.name==='TimeoutError'?'We couldn’t confirm receipt in time. Please try again; we’ll avoid saving a duplicate enquiry.':error.message;status.dataset.state='error';}
+  finally{pending=false;button.disabled=false;button.innerHTML='Send enquiry <span aria-hidden="true">↗</span>';form.removeAttribute('aria-busy');status.focus();}
+ });
+}
 // Preserve the intent of legacy certification/course enquiry links.
 {
  const params=new URLSearchParams(location.search);
