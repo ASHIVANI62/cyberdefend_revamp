@@ -11,5 +11,6 @@ export function structuredData({key,page,defs,hosts,site}) {
  const webpage={'@type':key==='contact'?'ContactPage':'WebPage','@id':url+'#webpage',url,name:page.title,description:page.description,isPartOf:{'@id':webId},about:{'@id':orgId},...(crumbs.length>1?{breadcrumb:{'@id':url+'#breadcrumb'}}:{}),inLanguage:'en'};
  const graph=[org,web,webpage,...(crumbs.length>1?[breadcrumb]:[])];
  if(['vapt','awareness','advisory'].includes(key))graph.push({'@type':'Service','@id':url+'#service',name:page.title,description:page.description,url,provider:{'@id':orgId},mainEntityOfPage:{'@id':url+'#webpage'}});
+ if(key==='securityEngineering')graph.push({'@type':'Course','@id':url+'#course',name:'Advanced Security Engineering & AI Security',description:page.description,url,provider:{'@id':orgId},timeRequired:'PT40H',inLanguage:'en',educationalLevel:'Professional',coursePrerequisites:'Networking and operating-system fundamentals; cybersecurity awareness.'});
  return {'@context':'https://schema.org','@graph':graph};
 }
