@@ -9,7 +9,7 @@ return `
     <div class="art-grid" aria-hidden="true"></div>
     <div class="art-corner">THE CYBERDEFEND ADVANTAGE<span>01 — CONNECTED EXPERTISE</span></div>
     <div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div>
-    <div class="art-emblem"><img src="/assets/symbol.svg" width="86" height="94" alt=""><span>CYBERDEFEND</span></div>
+    <div class="art-emblem"><img src="/assets/cyberdefend-stacked-light.png" width="2000" height="1478" alt="CyberDefend"></div>
     <div class="art-label label-assess"><span class="label-dot"></span>Assess the risk<span class="art-tag">01</span></div>
     <div class="art-label label-build"><span class="label-dot"></span>Build the capability<span class="art-tag">02</span></div>
     <div class="art-label label-progress"><span class="label-dot"></span>Put it into practice<span class="art-tag">03</span></div>

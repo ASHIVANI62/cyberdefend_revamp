@@ -2,7 +2,7 @@ export function structuredData({key,page,defs,hosts,site}) {
  const [domain,route]=defs[key],url=hosts[domain]+'/'+route;
  const orgId=hosts.main+'/#organization';
  const webId=hosts[domain]+'/#website';
- const org={'@type':'Organization','@id':orgId,name:site.name,url:hosts.main+'/',email:site.email,logo:{'@type':'ImageObject',url:hosts.main+'/assets/logo.svg'},sameAs:Object.values(site.socials).filter(u=>!u.includes('chat.whatsapp'))};
+ const org={'@type':'Organization','@id':orgId,name:site.name,url:hosts.main+'/',email:site.email,logo:{'@type':'ImageObject',url:hosts.main+'/assets/cyberdefend-stacked-light.png'},sameAs:Object.values(site.socials).filter(u=>!u.includes('chat.whatsapp'))};
  const web={'@type':'WebSite','@id':webId,name:domain==='main'?'CyberDefend':`CyberDefend ${domain==='academy'?'Academy':'Services'}`,url:hosts[domain]+'/',publisher:{'@id':orgId},inLanguage:'en'};
  const crumbs=[{name:'CyberDefend',item:hosts.main+'/'}];
  if(domain!=='main')crumbs.push({name:domain==='academy'?'Academy':'Services',item:hosts[domain]+'/'});
