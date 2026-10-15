@@ -28,10 +28,11 @@ assert.equal(resolve(origins.academy+'/certification/cissp').url.searchParams.ge
 assert(exists(new URL(origins.academy+'/blogs/ransomware/')));
 assert(exists(new URL(origins.academy+'/courses/cybersecurity-beginners/')));
 assert.equal(resolve(origins.main+'/academy/labs/').url.href,origins.academy+'/labs/');
+const careersMap=fs.readFileSync('dist/main/sitemap.xml','utf8');assert.equal([...careersMap.matchAll(/<loc>https:\/\/cyberdefend\.in\/careers\//g)].length,8,'Careers hub and seven roles must be indexed');
 let pages=0,sitemapUrls=0;
 for(const [site,origin] of Object.entries(origins)){
  const titles=new Set();const sitemap=fs.readFileSync(`dist/${site}/sitemap.xml`,'utf8');
- for(const [,url] of sitemap.matchAll(/<loc>(.*?)<\/loc>/g)){const u=new URL(url);assert.equal(u.origin,origin);assert(exists(u));assert(!/\/careers\/|\/casestudies\//.test(u.pathname));sitemapUrls++;}
+ for(const [,url] of sitemap.matchAll(/<loc>(.*?)<\/loc>/g)){const u=new URL(url);assert.equal(u.origin,origin);assert(exists(u));assert(!/\/casestudies\//.test(u.pathname));if(site!=='main')assert(!u.pathname.startsWith('/careers/'));sitemapUrls++;}
  for(const file of walk(`dist/${site}`).filter(f=>f.endsWith('index.html'))){const html=fs.readFileSync(file,'utf8');pages++;
   const canonical=html.match(/rel="canonical" href="([^"]+)"/)[1];assert(canonical.startsWith(origin+'/'));assert(exists(new URL(canonical)));
   const title=html.match(/<title>(.*?)<\/title>/)[1];assert(!titles.has(title),`Duplicate title: ${title}`);titles.add(title);
