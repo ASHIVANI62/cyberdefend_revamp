@@ -1,0 +1,399 @@
+[
+  {
+    "slug": "php2shell-php-security-updates-response-checklist",
+    "title": "PHP2Shell: PHP Security Updates and a Response Checklist",
+    "description": "Understand PHP2Shell, check fixed PHP versions, verify deployment and investigate suspicious activity with a practical checklist for website owners.",
+    "summary": "A practical response to the October 2026 PHP vulnerabilities: identify exposure, verify the runtime update and investigate suspicious activity.",
+    "datePublished": "2026-10-23",
+    "dateModified": "2026-10-23",
+    "category": "Vulnerability response",
+    "author": "CyberDefend",
+    "sources": [
+      {
+        "id": "php",
+        "title": "PHP security release and update guidance — 21 October 2026",
+        "url": "https://www.php.net/archive/2026.php#2026-10-21-5"
+      },
+      {
+        "id": "certin",
+        "title": "CERT-In vulnerability note CIVN-2026-0510 — 21 October 2026",
+        "url": "https://www.cert-in.org.in/s2cMainServlet?VLCODE=CIVN-2026-0510&pageid=PUBVLNOTES01"
+      },
+      {
+        "id": "oom",
+        "title": "PHP advisory: CVE-2026-109618, out-of-memory corruption",
+        "url": "https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w"
+      },
+      {
+        "id": "state",
+        "title": "PHP advisory: CVE-2026-109619, stale global state",
+        "url": "https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp"
+      },
+      {
+        "id": "aws",
+        "title": "Amazon Threat Intelligence: PHP2Shell attempts in MadPot — 21 October 2026",
+        "url": "https://aws.amazon.com/blogs/security/amazon-threat-intelligence-identifies-php2shell-exploitation-prior-to-public-disclosure-in-madpot/"
+      },
+      {
+        "id": "redhat",
+        "title": "Red Hat security bulletin RHSB-2026-013",
+        "url": "https://access.redhat.com/security/vulnerabilities/RHSB-2026-013"
+      },
+      {
+        "id": "certeu",
+        "title": "CERT-EU security advisory 2026-018",
+        "url": "https://cert.europa.eu/publications/security-advisories/2026-018/"
+      },
+      {
+        "id": "waf",
+        "title": "AWS: WAF mitigations and their limits for PHP2Shell",
+        "url": "https://aws.amazon.com/blogs/security/using-aws-waf-to-apply-mitigations-for-php2shell-rce-vulnerabilities-cve-2026-109618-and-cve-2026-109619/"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "text": "What should PHP website owners do now?",
+        "id": "summary"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Identify the PHP runtime behind every website you operate, apply the appropriate security update, and verify that the running service uses the fixed build. On 21 October 2026, PHP released fixes for CVE-2026-109618 and CVE-2026-109619, often called PHP2Shell. These flaws can permit remote code execution without authentication. Patching is the complete remedy; temporary filtering does not replace it."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "php",
+            "text": "PHP’s security release explains the scope and fixes."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For Indian organisations, CERT-In’s critical-severity note CIVN-2026-0510, issued on 21 October, provides a local reference for this response. It identifies the affected supported branches and urges updates. A website-maintenance contract should therefore lead to a concrete confirmation from the hosting or development provider, rather than an assumption that someone else has patched PHP."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "certin",
+            "text": "See the CERT-In advisory."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Why this matters beyond the development team",
+        "id": "business-impact"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A business may know which content management system runs its website without knowing who maintains the interpreter beneath it. Treat this as an ownership exercise: who controls the hosting account, who can deploy a runtime update, and who verifies that customer-facing functions still work? Include outsourced websites and internal portals in the discussion."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Our recommended response is to track three separate outcomes: exposure identified, vulnerable software replaced, and suspicious activity investigated. Closing the patch ticket addresses only the second. Keeping these outcomes separate helps a small team avoid declaring the entire incident response complete after a successful installation."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "How the two vulnerabilities differ",
+        "id": "technical-explanation"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "CVE-2026-109618 concerns memory handling when a request runs out of memory. PHP can abort while internal request structures are incomplete, then process that invalid state during cleanup. The PHP advisory describes a demonstrated application-independent path in Apache mod_php. It also explains why PHP-FPM behaves differently during startup failures; that difference is not a blanket exemption from risk."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "oom",
+            "text": "Read PHP’s out-of-memory advisory."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "CVE-2026-109619 concerns state retained by a worker across requests. A request can leave a reference to memory that has already been freed; a later operation in the same worker can use it before normal initialisation resets it. Exploitability depends on the affected internal state and configuration. These are runtime flaws, so a login page is not evidence that the underlying request-processing path is protected."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "state",
+            "text": "Read PHP’s stale-state advisory."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Deployment details matter. Red Hat’s bulletin distinguishes its usual PHP-FPM deployments from higher-risk mod_php configurations and documents product-specific differences. Use the advisory for your operating system or managed product alongside the upstream notice; do not interpret a general PHP version string as the whole risk assessment."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "redhat",
+            "text": "Check Red Hat’s product guidance where applicable."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Which versions contain the fixes?",
+        "id": "fixed-versions"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The PHP project lists the following first fixed upstream releases for the supported branches. Select the appropriate supported vendor update for your environment, including later security releases when available."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "php",
+            "text": "Verify against the official release notice."
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "caption": "First fixed upstream PHP releases announced on 21 October 2026",
+        "headers": [
+          "PHP branch",
+          "Affected upstream releases in this branch",
+          "First fixed release"
+        ],
+        "rows": [
+          [
+            "8.2",
+            "Earlier than 8.2.35",
+            "8.2.35"
+          ],
+          [
+            "8.3",
+            "Earlier than 8.3.36",
+            "8.3.36"
+          ],
+          [
+            "8.4",
+            "Earlier than 8.4.27",
+            "8.4.27"
+          ],
+          [
+            "8.5",
+            "Earlier than 8.5.12",
+            "8.5.12"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "PHP 8.1 and older are outside normal upstream support. CERT-EU notes that some distribution or long-term-support vendors provide backports, and that limited source backports exist for certain older branches. A backport needs vendor evidence; it is not permission to assume an old installation is safe. Plan migration to a supported branch."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "certeu",
+            "text": "See CERT-EU’s legacy-version and package guidance."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "A practical patch-and-verify workflow",
+        "id": "patch-workflow"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The following is CyberDefend’s operational checklist, not a claim that we have inspected your systems. Use your normal authorised change process, with urgency appropriate to an exposed critical vulnerability."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Create an asset record for each application: owner, hostname, hosting provider, PHP branch, package build, deployment image and exposure to untrusted requests. Ask vendors to account for embedded PHP as well as visibly PHP-based websites."
+            }
+          ],
+          [
+            {
+              "text": "Get a precise remediation answer from the owner. For managed hosting, ask which fixed package or runtime is deployed and when. For a vendor-maintained appliance, obtain its product-specific advisory and upgrade path."
+            }
+          ],
+          [
+            {
+              "text": "Apply the approved update and replace or restart the affected workers through the supported service procedure. For containers, rebuild and redeploy the application image; changing a base-image tag alone does not demonstrate that existing instances were replaced."
+            }
+          ],
+          [
+            {
+              "text": "Verify the runtime serving web traffic, not just the command-line interpreter. Capture the package or image identifier and vendor advisory reference. Use authenticated administration or deployment records rather than exposing a public diagnostic page."
+            }
+          ],
+          [
+            {
+              "text": "Test important journeys such as sign-in, forms, uploads and scheduled processing. Record the result and patch time. If an update breaks the application, contain the exposed service while resolving compatibility rather than silently returning it to an unpatched public state."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Investigate activity before the disclosure date",
+        "id": "detection"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Amazon Threat Intelligence reported an exploitation attempt in MadPot telemetry on 17 October 2026 and further attempts on 21 October before disclosure. Its report explicitly says it was unclear whether those early attempts would have succeeded on real-world systems. This is evidence of attempts observed by Amazon, not evidence that your organisation was breached."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "aws",
+            "text": "Read Amazon’s original report."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Amazon recommends investigating from at least 17 October and examining POST uploads containing PHP_SESSION_UPLOAD_PROGRESS. Preserve available web, proxy, runtime and endpoint telemetry covering that period and earlier where feasible. Treat a matching field as a lead requiring context, not as a standalone compromise verdict."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "aws",
+            "text": "See Amazon’s investigation recommendations."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "As general defensive triage, correlate unusual requests with worker crashes, unexpected child processes, unexplained outbound connections, new files and account changes. Compare events with deployments and legitimate upload workflows. These are investigative ideas, not validated PHP2Shell signatures. Access logs often omit request bodies, so a search with no matches cannot establish that exploitation did not occur. Escalate corroborated suspicious activity through your incident-response process."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "What temporary controls can and cannot do",
+        "id": "temporary-controls"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "AWS explains that a web application firewall can reduce exposure to some request patterns but cannot observe PHP worker memory or cover every vulnerable path. Blocking multipart requests may be useful where an application has no legitimate uploads, while other applications would lose essential functionality. Validate the coverage and business impact of any rule before relying on it."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "waf",
+            "text": "Read the AWS discussion of WAF coverage limits."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "If you cannot promptly patch an exposed application, CERT-EU recommends considering isolation from public networks until the fix is applied and verified. Assign an owner and a deadline to that exception. Avoid copying emergency runtime settings without understanding their availability effects and the remaining vulnerability paths."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "certeu",
+            "text": "Review CERT-EU’s containment guidance."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "The useful takeaway",
+        "id": "takeaways"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A reliable response produces evidence: an inventory with owners, a verified fixed runtime, a record of functional checks and an investigation decision. Keep that evidence with the change record. The same approach will make the next runtime advisory easier to handle, even when the application itself has not changed."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects the sources checked on 23 October 2026. Exploitation evidence and vendor guidance can evolve. Consult the linked advisories for your exact product and configuration; this overview does not certify a deployment as secure."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For further practical learning, explore CyberDefend Academy’s "
+          },
+          {
+            "internal": "programmes",
+            "text": "learning paths"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "internal": "labs",
+            "text": "hands-on labs"
+          },
+          {
+            "text": ". Businesses reviewing their remediation process can also explore our "
+          },
+          {
+            "internal": "advisory",
+            "text": "security advisory services"
+          },
+          {
+            "text": "."
+          }
+        ]
+      }
+    ]
+  }
+]
