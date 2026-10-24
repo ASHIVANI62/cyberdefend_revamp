@@ -1,5 +1,276 @@
 [
   {
+    "slug": "litellm-supply-chain-compromise-response-guide",
+    "title": "LiteLLM Supply-Chain Compromise: An Incident Response Guide",
+    "description": "Learn how to identify LiteLLM 1.107.0 exposure, contain affected systems, rotate credentials and prevent similar AI software supply-chain incidents.",
+    "summary": "A defensive guide to identifying exposure to the malicious LiteLLM 1.107.0 release, containing affected systems and reducing future dependency risk.",
+    "datePublished": "2026-10-24",
+    "dateModified": "2026-10-24",
+    "category": "AI & supply-chain security",
+    "author": "CyberDefend",
+    "sources": [
+      {
+        "id": "litellm",
+        "title": "LiteLLM incident report: version 1.107.0 compromise — 21 October 2026",
+        "url": "https://docs.litellm.ai/blog/security-incident-oct-21-2026"
+      },
+      {
+        "id": "certin",
+        "title": "CERT-In advisory CIAD-2026-0053 — 23 October 2026",
+        "url": "https://www.cert-in.org.in/s2cMainServlet?VLCODE=CIAD-2026-0053&pageid=PUBVLNOTES02"
+      },
+      {
+        "id": "datadog",
+        "title": "Datadog Security Labs analysis of the LiteLLM supply-chain compromise",
+        "url": "https://securitylabs.datadoghq.com/articles/litellm-compromised-pypi-docker/"
+      },
+      {
+        "id": "stepsecurity",
+        "title": "StepSecurity technical analysis and recovery guidance for LiteLLM 1.107.0",
+        "url": "https://www.stepsecurity.io/blog/litellm-1-107-0-compromised-pypi-backdoored-wheels-credential-stealer"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "text": "What should LiteLLM users do now?",
+        "id": "direct-answer"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Determine whether LiteLLM 1.107.0 or an affected container image actually ran in your environment on 21 October 2026. If it did, isolate the system, preserve relevant evidence, rebuild it from a known-good source and rotate every credential the environment could access. Do not treat removal of the package from public registries as remediation for a system that already executed it."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "LiteLLM states that all seven PyPI wheels for version 1.107.0 were malicious from 11:39:51 to 13:23 UTC. Docker Hub tags v1.107.0, latest, main-latest and main-stable pointed to a compromised image from 11:46:56 to 14:20 UTC; equivalent GHCR tags were unavailable by 13:51 UTC. The project says earlier versions and its private enterprise release were not affected. "
+          },
+          {
+            "source": "litellm",
+            "text": "Check the official incident record for the complete artifact list and timeline."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Why this incident matters to AI teams",
+        "id": "why-it-matters"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "LiteLLM is used as a Python SDK and gateway across multiple model providers. A gateway or developer environment may be able to reach model-provider tokens, cloud identities, source repositories, deployment systems and application data. The incident therefore illustrates a wider risk: a trusted dependency can become an access path into several services at once, even when the application code itself has not changed."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "CERT-In describes the event as a targeted software supply-chain compromise. Its advisory explains that malicious files used Python startup mechanisms, so execution could occur when Python initialized without an application explicitly importing LiteLLM. That detail changes triage: finding the package in an environment is not merely a vulnerable-library finding; teams must determine whether Python ran after installation. "
+          },
+          {
+            "source": "certin",
+            "text": "Read CERT-In advisory CIAD-2026-0053."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Establish exposure from build and runtime evidence",
+        "id": "establish-exposure"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Start with evidence that survives changing registry tags. Search dependency lockfiles, software bills of materials, build logs, package caches, image manifests and deployment records for LiteLLM 1.107.0. For containers, inspect the immutable image digest recorded by the runtime or orchestrator rather than checking only what a floating tag such as latest points to today. The official report identifies the compromised Docker image index as sha256:1bbcb1443bc962e45f5aad53fe3d2c30600e0379715fb6c664cdd3ac126c339e."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Inventory: identify repositories, CI jobs, laptops, servers and clusters that install LiteLLM or use its images."
+            }
+          ],
+          [
+            {
+              "text": "Resolution history: check whether an unpinned dependency or a lockfile refresh could have selected 1.107.0 during the publication window."
+            }
+          ],
+          [
+            {
+              "text": "Runtime history: confirm whether Python started in the affected environment or whether an affected container was launched."
+            }
+          ],
+          [
+            {
+              "text": "Filesystem evidence: look for litellm-1.107.0.dist-info, cook.pth and sitecustomize.py in relevant site-packages directories. The project cautions that finding one confirms exposure, while not finding one does not prove the environment is clean. "
+            },
+            {
+              "source": "litellm",
+              "text": "See the vendor's exposure checks."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Contain and recover in the right order",
+        "id": "contain-recover"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "If an affected artifact ran, treat the host or container as compromised. Isolate it from normal network access while preserving the logs and metadata your incident-response process requires. The LiteLLM notice warns against beginning with pip commands because starting Python in the affected environment can execute the malicious startup files again. Prefer investigation from a trusted environment and rebuild rather than attempting to clean the running system in place."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Preserve evidence before replacement: deployment events, process and network telemetry, identity logs, image IDs, package metadata and relevant cloud audit records."
+            }
+          ],
+          [
+            {
+              "text": "Rebuild virtual environments, hosts or containers from a known-good artifact. Purge version 1.107.0 from internal mirrors, caches and registries so it cannot be reintroduced."
+            }
+          ],
+          [
+            {
+              "text": "Revoke or rotate credentials the affected environment could reach, prioritising cloud and workload identities, CI/CD and registry tokens, model-provider keys, source-control access, database secrets and administrative sessions. Rotation should invalidate the old value, not merely create an additional key."
+            }
+          ],
+          [
+            {
+              "text": "Review identity, cloud, source-control and model-provider audit logs for unusual use after the first possible execution time. Expand the review if credentials were shared across systems."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Datadog's analysis reports credential-stealing and remote-access capabilities. StepSecurity provides additional file, process, domain and artifact indicators. Use those indicators as investigative leads and validate them against your own baseline. An indicator match needs contextual investigation; absence of a known indicator cannot demonstrate that no data left the system. "
+          },
+          {
+            "source": "datadog",
+            "text": "Review the independent payload analysis."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "stepsecurity",
+            "text": "Consult the detailed recovery guidance and indicators."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Reduce the next dependency compromise",
+        "id": "prevention"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Version pinning limits surprise updates but does not establish that an artifact is trustworthy. Combine exact dependency versions with reviewed lockfile changes, immutable container digests, provenance verification where available and an approved artifact registry. Retain build metadata so responders can later answer which exact wheel or image ran, where and when."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Use short-lived workload identities and least-privilege service accounts so one runtime cannot expose unrelated environments."
+            }
+          ],
+          [
+            {
+              "text": "Restrict outbound connections from build runners and production gateways to required destinations, with usable logs for denied and permitted traffic."
+            }
+          ],
+          [
+            {
+              "text": "Separate build, release and production credentials, and prevent long-lived personal tokens from entering shared runners or containers."
+            }
+          ],
+          [
+            {
+              "text": "Test a dependency incident playbook that joins engineering, identity, cloud and business owners; package removal alone is not an incident-closure criterion."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Limits and practical takeaways",
+        "id": "takeaways"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The reported times above are UTC and should be converted carefully when comparing them with logs. Floating tags may now point to clean images, so current registry state cannot reconstruct a historical deployment. The vendor's investigation was updated as facts developed; consult its canonical incident record before making final scope decisions."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The most useful outcome is an evidence-backed decision for every environment: not present, present but not executed, or executed and handled as a compromise. Record the evidence, containment, rebuild and credential-rotation decisions. This approach applies beyond LiteLLM to any package that executes inside a credential-rich build or AI gateway environment."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects sources checked on 24 October 2026. Guidance and investigation findings can change. For practical learning, explore CyberDefend Academy's "
+          },
+          {
+            "internal": "programmes",
+            "text": "professional learning paths"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "internal": "labs",
+            "text": "hands-on labs"
+          },
+          {
+            "text": ". Organisations strengthening software supply-chain response can also review our "
+          },
+          {
+            "internal": "advisory",
+            "text": "security advisory services"
+          },
+          {
+            "text": "."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "php2shell-php-security-updates-response-checklist",
     "title": "PHP2Shell: PHP Security Updates and a Response Checklist",
     "description": "Understand PHP2Shell, check fixed PHP versions, verify deployment and investigate suspicious activity with a practical checklist for website owners.",
