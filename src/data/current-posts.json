@@ -1,5 +1,297 @@
 [
   {
+    "slug": "gitlab-cve-2026-110264-patch-detection-guide",
+    "title": "GitLab CVE-2026-110264: Patch and Detection Guide",
+    "description": "Learn which self-managed GitLab versions are affected by CVE-2026-110264 and how to patch, verify and assess possible compromise safely.",
+    "summary": "A practical guide for self-managed GitLab teams to identify affected versions, upgrade safely and assess evidence related to CVE-2026-110264.",
+    "datePublished": "2026-10-25",
+    "dateModified": "2026-10-25",
+    "category": "DevSecOps & vulnerability response",
+    "author": "CyberDefend",
+    "sources": [
+      {
+        "id": "gitlab",
+        "title": "GitLab Critical Patch Release 19.5.1 and backports — 21 October 2026",
+        "url": "https://docs.gitlab.com/releases/patches/patch-release-gitlab-19-5-1-released/"
+      },
+      {
+        "id": "certeu",
+        "title": "CERT-EU Security Advisory 2026-019 — 22 October 2026",
+        "url": "https://cert.europa.eu/publications/security-advisories/2026-019"
+      },
+      {
+        "id": "nvd",
+        "title": "NVD entry for CVE-2026-110264",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-110264"
+      },
+      {
+        "id": "crash-detection",
+        "title": "GitLab detection: Onigmo native worker crash",
+        "url": "https://gitlab.com/gitlab-security-oss/tldr/-/blob/main/Detections/platforms/GitLab/Vulnerability%20Detections/onigmo_native_worker_crash.md"
+      },
+      {
+        "id": "render-detection",
+        "title": "GitLab detection: Org mode render error burst",
+        "url": "https://gitlab.com/gitlab-security-oss/tldr/-/blob/main/Detections/platforms/GitLab/Vulnerability%20Detections/org_mode_render_error_burst.md"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "text": "What should self-managed GitLab administrators do?",
+        "id": "direct-answer"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Identify the exact version of every self-managed GitLab instance, upgrade each affected installation to a fixed release, verify that all application nodes are running the intended build, and review available evidence for attempted or successful exploitation. CVE-2026-110264 is not a finding to defer behind a routine maintenance queue: GitLab assigns it CVSS 10.0 and says it can, under certain conditions, allow an unauthenticated user to execute arbitrary code on the server."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "gitlab",
+            "text": "Read GitLab's official critical patch release."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The primary advisories reviewed for this article do not state that exploitation has been confirmed in the wild. That absence should not be presented as proof of safety. The combination of unauthenticated network reachability, potential code execution and the sensitivity of a source-code platform justifies urgent remediation and an evidence-led assessment, especially for internet-facing instances."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Which GitLab versions are affected?",
+        "id": "affected-versions"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "GitLab Community Edition and Enterprise Edition are affected across a wide version range. GitLab.com was already running a patched version when the advisory was published. GitLab also states that Dedicated tenants running 19.3.5-internal0 or 19.4.2-internal0 and later already include the fix. The following table applies to self-managed CE and EE deployments."
+          }
+        ]
+      },
+      {
+        "type": "table",
+        "caption": "Affected self-managed GitLab ranges and fixed releases",
+        "headers": [
+          "Affected range",
+          "Upgrade to at least"
+        ],
+        "rows": [
+          [
+            "7.0 through 18.11.12",
+            "18.11.13"
+          ],
+          [
+            "19.0 before 19.0.10",
+            "19.0.10"
+          ],
+          [
+            "19.1 before 19.1.9",
+            "19.1.9"
+          ],
+          [
+            "19.2 before 19.2.9",
+            "19.2.9"
+          ],
+          [
+            "19.3 before 19.3.6",
+            "19.3.6"
+          ],
+          [
+            "19.4 before 19.4.3",
+            "19.4.3"
+          ],
+          [
+            "19.5 before 19.5.1",
+            "19.5.1"
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "These boundaries come directly from GitLab and are repeated by CERT-EU. Upgrade to the latest available patch in a supported release line rather than treating the minimum version as a long-term target. Deployment type does not remove the issue: GitLab says that when its notice does not name a specific installation method, all deployment types are affected. "
+          },
+          {
+            "source": "certeu",
+            "text": "Review CERT-EU's affected-product summary."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "nvd",
+            "text": "See the NVD record for independent vulnerability tracking."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Why a GitLab server needs careful incident handling",
+        "id": "why-it-matters"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A self-managed GitLab instance is more than a web application. Depending on configuration, it may store proprietary source code, protected variables, package artifacts, deployment metadata, access tokens and links to runners or cloud systems. Arbitrary code execution on the server can therefore create risk well beyond the GitLab user interface. The exact impact depends on the privileges, integrations, network access and secrets available to that instance."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "GitLab describes the root issue as an integer overflow while compiling a specially crafted regular expression. Administrators do not need exploit details to act safely. The operational questions are whether an affected version was reachable, whether suspicious processing occurred, what the service could access and whether any follow-on activity is visible."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Patch without losing the evidence",
+        "id": "patch-safely"
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Inventory every instance, including test, disaster-recovery and temporarily exposed systems. Record the installed version, deployment method, external URL, owner and network exposure."
+            }
+          ],
+          [
+            {
+              "text": "Preserve relevant application, reverse-proxy, system, authentication and security telemetry before retention policies or restarts remove it. Follow your established evidence-handling process when compromise is suspected."
+            }
+          ],
+          [
+            {
+              "text": "Back up according to GitLab's supported procedure, review the upgrade path for older installations and test critical integrations. A backup supports recovery; it is not a substitute for patching or compromise assessment."
+            }
+          ],
+          [
+            {
+              "text": "Upgrade all nodes consistently, including web, background-processing and geo or standby components where applicable. Confirm the running version from the deployed service rather than relying only on a completed package-manager command."
+            }
+          ],
+          [
+            {
+              "text": "Retest sign-in, repository operations, CI/CD, webhooks, package access and backups. Document the version evidence and completion time for each instance."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Where immediate patching is impossible, reduce public exposure using controls already supported by your architecture and assign a short, explicit exception deadline. Network restriction can reduce reachability, but it does not repair the vulnerable software and may not protect an instance reachable through another trusted system."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Assess possible exploitation using multiple signals",
+        "id": "detection"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "GitLab published two detections for self-managed customers: an Onigmo native worker crash signal and an Org-mode render error burst signal. Review the rules, their required data sources and their limitations before translating them into your monitoring platform. "
+          },
+          {
+            "source": "crash-detection",
+            "text": "Inspect the native-worker crash detection."
+          },
+          {
+            "text": " "
+          },
+          {
+            "source": "render-detection",
+            "text": "Inspect the Org-mode render-error detection."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Correlate detection matches with request time, source, target project, application logs and system events. A match is a lead for investigation, not by itself a complete incident narrative."
+            }
+          ],
+          [
+            {
+              "text": "Look for unexpected GitLab service child processes, new persistence, unexplained outbound connections, account or token changes, altered hooks and unusual repository or runner activity. These are general triage ideas, not vendor-confirmed signatures for this CVE."
+            }
+          ],
+          [
+            {
+              "text": "Scope accessible secrets and integrations. If evidence supports server compromise, rotate or revoke affected credentials from a trusted system and review their use in the relevant identity, cloud and CI/CD audit logs."
+            }
+          ],
+          [
+            {
+              "text": "Do not close the assessment only because the published detections are quiet. Logging gaps, retention limits and unobserved execution paths can prevent a match. Record what evidence was available and the confidence of the conclusion."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Practical takeaways for engineering leaders",
+        "id": "takeaways"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Treat source-code management as production security infrastructure. Maintain an owned inventory, keep supported upgrade paths rehearsed, forward security-relevant logs away from the application host and reduce long-lived credentials available to the platform. Separating runner trust zones and limiting outbound access can reduce the blast radius of a future server-side flaw."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects the advisories checked on 25 October 2026. Vendor guidance and exploitation information can change, so consult the linked GitLab release before making final scope decisions. Teams developing practical response skills can explore CyberDefend Academy's "
+          },
+          {
+            "internal": "programmes",
+            "text": "professional learning paths"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "internal": "labs",
+            "text": "hands-on labs"
+          },
+          {
+            "text": ". Organisations reviewing DevSecOps exposure can also explore our "
+          },
+          {
+            "internal": "advisory",
+            "text": "security advisory services"
+          },
+          {
+            "text": "."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "litellm-supply-chain-compromise-response-guide",
     "title": "LiteLLM Supply-Chain Compromise: An Incident Response Guide",
     "description": "Learn how to identify LiteLLM 1.107.0 exposure, contain affected systems, rotate credentials and prevent similar AI software supply-chain incidents.",
