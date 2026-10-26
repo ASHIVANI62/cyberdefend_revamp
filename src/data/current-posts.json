@@ -1,5 +1,261 @@
 [
   {
+    "slug": "connectwise-cloud-backup-microsoft-365-response-guide",
+    "title": "ConnectWise Cloud Backup Incident: Microsoft 365 Response Guide",
+    "description": "A practical response guide for investigating ConnectWise Cloud Backup application activity, persistence and exposure in Microsoft 365 tenants.",
+    "summary": "How Microsoft 365 administrators and MSPs can review ConnectWise Cloud Backup application activity, investigate persistence and re-enable services safely.",
+    "datePublished": "2026-10-26",
+    "dateModified": "2026-10-26",
+    "category": "Cloud identity & incident response",
+    "author": "CyberDefend",
+    "sources": [
+      {
+        "id": "connectwise",
+        "title": "ConnectWise Cloud Backup investigation and restoration update — 25 October 2026",
+        "url": "https://www.connectwise.com/company/trust/advisories"
+      },
+      {
+        "id": "microsoft",
+        "title": "Microsoft: Storm-0940 and the ConnectWise supply-chain compromise — 21 October 2026",
+        "url": "https://www.microsoft.com/en-us/security/blog/2026/10/21/storm-0940-uses-artex-agentic-ai-connectwise-supply-chain-compromise/"
+      },
+      {
+        "id": "huntress",
+        "title": "Huntress investigation of ConnectWise application credential abuse",
+        "url": "https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access"
+      },
+      {
+        "id": "todyl",
+        "title": "Todyl investigation of unauthorized ConnectWise Cloud Backup application access",
+        "url": "https://www.todyl.com/blog/investigation-unauthorized-access-through-the-connectwise-cloud-backup-microsoft-365-app"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "text": "What should Microsoft 365 administrators do now?",
+        "id": "direct-answer"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "If your organisation or managed customer used ConnectWise Cloud Backup, formerly SkyKick, keep affected application connections disabled until ConnectWise provides instructions for the relevant service. Review service-principal sign-ins, directory changes and credentials added to other applications; then assess what the application could access. Do not assume that disabling the original application removes persistence already created elsewhere in the tenant."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "ConnectWise says it identified unauthorised access to application credentials associated with Cloud Backup. Its 25 October update states that restoration and security validation are continuing, with phased partner onboarding planned, and that individual Microsoft 365 environment review remains essential. The company says existing backup archives remain encrypted, isolated and preserved, with no indication that those archives were compromised. "
+          },
+          {
+            "source": "connectwise",
+            "text": "Follow the current ConnectWise advisory and service-specific instructions."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Why disabling one application may not be enough",
+        "id": "why-it-matters"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Multi-tenant backup applications need broad Microsoft 365 permissions to protect mail, files, collaboration data and directory information. When an attacker can authenticate as a trusted application, the resulting token inherits permissions that tenant administrators previously approved. User-password resets and user-session revocation do not, by themselves, address an application credential."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Microsoft reports that Storm-0940 used compromised ConnectWise cloud application identities to attempt access across more than 2,250 tenants. In some environments, activity progressed to Microsoft Graph and directory operations, including application credential modifications, reconnaissance and changes involving identities, groups and privileged roles. Microsoft cautions that an affected application or successful authentication does not automatically prove data access or exfiltration. "
+          },
+          {
+            "source": "microsoft",
+            "text": "Read Microsoft's threat analysis and mitigation guidance."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Build an evidence-led tenant timeline",
+        "id": "tenant-timeline"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Begin with a tenant-by-tenant inventory. Record whether Cloud Backup, Cloud Management, SaaS Security or older SkyKick-named enterprise applications are present; their application identifiers, permissions, directory roles and current enabled state; and whether the service was actively used. For MSPs, include the partner tenant and every managed customer tenant rather than sampling only a few customers."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Review the Service principal sign-ins view, not only User sign-ins. Huntress identifies 506e08f9-6e9a-4da4-942b-a099a03644ae as the ConnectWise Cloud Backup application ID and recommends reviewing activity from approximately 01:00 UTC on 15 October through 02:00 UTC on 16 October, while expanding the window where retention permits."
+            }
+          ],
+          [
+            {
+              "text": "Correlate suspicious service-principal authentication with Microsoft Graph operations, Entra directory audit events, role assignments, consent changes and application credential changes."
+            }
+          ],
+          [
+            {
+              "text": "Inspect other privileged enterprise applications and app registrations for unexpected client secrets or certificates. Record the credential creation time, actor, application and whether it was subsequently used."
+            }
+          ],
+          [
+            {
+              "text": "Review Exchange, SharePoint, OneDrive and Teams audit evidence that is available in your licensing and logging configuration. Separate confirmed operations from access that was technically possible but cannot be proven from retained logs."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Huntress observed successful sign-ins and, in one investigated tenant, changes that added credentials to other trusted applications. It also explains that some application reads are not fully represented in standard audit data. This is why a quiet directory log cannot by itself establish that data was not accessed. "
+          },
+          {
+            "source": "huntress",
+            "text": "Review Huntress's observed behaviours and investigation steps."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Containment and recovery priorities",
+        "id": "containment"
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Keep the affected application disabled according to ConnectWise guidance. Avoid deleting it solely as an emergency action because deletion removes consent and can complicate controlled restoration; preserve the configuration and evidence your response process requires."
+            }
+          ],
+          [
+            {
+              "text": "Remove unauthorised directory-role assignments and unexpected credentials from affected applications after preserving evidence. Validate the change from a trusted administrator account and record exactly what was revoked."
+            }
+          ],
+          [
+            {
+              "text": "Where follow-on access is confirmed, scope and rotate credentials reachable through the modified application, including MSP management, security, automation and cloud-management identities. Creating a replacement secret is insufficient unless the unauthorised credential is invalidated."
+            }
+          ],
+          [
+            {
+              "text": "Review Conditional Access exclusions and workload-identity controls. User MFA does not protect an app-only client-credential flow, so use controls designed for service principals and workload identities."
+            }
+          ],
+          [
+            {
+              "text": "Coordinate legal, privacy and customer-notification decisions with verified scope and applicable obligations. Do not convert token issuance alone into an unsupported claim that particular files or messages were taken."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Todyl confirmed app-only authentication in monitored tenants and explains that disabling an enterprise application prevents new tokens, while previously issued tokens can remain valid briefly. Its investigation also highlights the attribution problem created when legitimate and malicious activity use the same application identity. "
+          },
+          {
+            "source": "todyl",
+            "text": "See Todyl's technical investigation and response recommendations."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Re-enable services as a controlled change",
+        "id": "safe-restoration"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Restoration by the vendor and re-enablement inside your tenant are related but separate decisions. Wait for instructions that match the exact service and partner phase. Before re-enabling, confirm that investigation actions are complete, unexpected credentials and roles are removed, current vendor credentials are in use, monitoring is active and the business owner accepts any gap in backup coverage."
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Capture the application's permissions and roles before and after re-enrolment, and challenge any access that is broader than the documented service requirement."
+            }
+          ],
+          [
+            {
+              "text": "Test backup and restore operations using non-sensitive validation data where practical, then verify that normal service-principal sign-in patterns match the vendor's documented infrastructure."
+            }
+          ],
+          [
+            {
+              "text": "Monitor application authentications, role changes and credential additions closely after reconnection. Retain a rollback owner and a fast method to disable the application again."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Long-term lessons for third-party cloud access",
+        "id": "lessons"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Maintain an inventory of enterprise applications, owners, consented permissions, publisher verification, credentials and directory roles. Review high-privilege applications periodically and alert when they authenticate from new infrastructure, add credentials, modify other applications or acquire privileged roles. For MSPs, make cross-tenant investigation and revocation a tested capability rather than a spreadsheet assembled during an incident."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects sources checked on 26 October 2026. ConnectWise's restoration and investigation are continuing, so consult its current advisory before changing service state. Teams building cloud-identity response skills can explore CyberDefend Academy's "
+          },
+          {
+            "internal": "programmes",
+            "text": "professional learning paths"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "internal": "labs",
+            "text": "hands-on labs"
+          },
+          {
+            "text": ". Organisations reviewing third-party cloud access can also explore our "
+          },
+          {
+            "internal": "advisory",
+            "text": "security advisory services"
+          },
+          {
+            "text": "."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "gitlab-cve-2026-110264-patch-detection-guide",
     "title": "GitLab CVE-2026-110264: Patch and Detection Guide",
     "description": "Learn which self-managed GitLab versions are affected by CVE-2026-110264 and how to patch, verify and assess possible compromise safely.",
