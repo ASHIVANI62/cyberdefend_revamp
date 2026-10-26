@@ -73,6 +73,8 @@ for(const target of ['main','services','academy']){const {execFileSync}=await im
 }
 const base=path.join(out,mode==='all'?'preview':mode);fs.rmSync(base,{recursive:true,force:true});fs.mkdirSync(base,{recursive:true});fs.cpSync('src/assets',path.join(base,'assets'),{recursive:true});
 const selected=Object.entries(pages).filter(([k])=>mode==='all'||defs[k][0]===mode);
+// Seller authorisation only: no ad scripts or placements are enabled here.
+if(['main','academy'].includes(mode))fs.copyFileSync('src/data/ads.txt',path.join(base,'ads.txt'));
 for(const [key,p] of selected){const route=mode==='all'?localPath(key):'/'+defs[key][1];const dest=path.join(base,route,'index.html');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,shell(key,p));}
 fs.writeFileSync(path.join(base,'404.html'),`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page not found | CyberDefend</title><link rel="stylesheet" href="/assets/style.css"><link rel="stylesheet" href="/assets/refinement.css"><link rel="stylesheet" href="/assets/programme.css"><link rel="stylesheet" href="/assets/careers.css"><main class="container"><section class="page-hero">${eyebrow('404 / Page not found')}<h1>Let’s get you<br><em>back on track.</em></h1><p>This page may have moved or the link may be incorrect.</p>${btn('Go to CyberDefend','home')}</section></main></html>`);
 const sitemap=selected.filter(([,p])=>!p.noindex).map(([k,p])=>`<url><loc>${hosts[defs[k][0]]}/${defs[k][1]}</loc>${p.article?`<lastmod>${p.article.dateModified}</lastmod>`:''}</url>`).join('');

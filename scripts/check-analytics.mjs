@@ -49,3 +49,8 @@ for (const target of ['main', 'services', 'academy']) {
   assert(fs.readFileSync(`dist/${target}/_headers`, 'utf8').includes('https://www.googletagmanager.com'));
 }
 console.log('PASS: analytics consent, withdrawal, reacceptance, safe event payloads, preview exclusion and three-site integration.');
+for (const target of ['main', 'academy']) {
+  assert.equal(fs.readFileSync(`dist/${target}/ads.txt`, 'utf8'), 'google.com, pub-1656597464906448, DIRECT, f08c47fec0942fa0\n');
+}
+assert(!fs.existsSync('dist/services/ads.txt'));
+console.log('PASS: publisher ads.txt on main and Academy only.');
