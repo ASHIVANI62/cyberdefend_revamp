@@ -46,6 +46,9 @@ for (const target of ['main', 'services', 'academy']) {
   const html = fs.readFileSync(`dist/${target}/index.html`, 'utf8');
   assert.equal((html.match(/src="\/assets\/analytics.js"/g) || []).length, 1);
   assert(html.includes('data-analytics-settings'));
+  const head = html.split('</head>')[0];
+  assert.equal((head.match(/<meta name="google-adsense-account" content="ca-pub-1656597464906448">/g) || []).length, target === 'services' ? 0 : 1);
+  assert(!html.includes('pagead2.googlesyndication.com'));
   assert(fs.readFileSync(`dist/${target}/_headers`, 'utf8').includes('https://www.googletagmanager.com'));
 }
 console.log('PASS: analytics consent, withdrawal, reacceptance, safe event payloads, preview exclusion and three-site integration.');
