@@ -1,5 +1,256 @@
 [
   {
+    "slug": "nodejs-brotli-cve-2026-111497-response-checklist",
+    "title": "Node.js Brotli CVE-2026-111497: A Runtime Response Checklist",
+    "description": "Assess Node.js Brotli exposure, patch deployed runtimes and investigate decoder crashes with a practical checklist for engineering and security teams.",
+    "summary": "The October 2026 Node.js security release fixes a Brotli decoder flaw. Here is how to identify relevant workloads, deploy the fix and verify remediation.",
+    "datePublished": "2026-10-27",
+    "dateModified": "2026-10-27",
+    "author": "CyberDefend",
+    "category": "Runtime security & defensive engineering",
+    "sources": [
+      {
+        "id": "advisory",
+        "title": "Node.js: 21 October 2026 security releases",
+        "url": "https://nodejs.org/en/blog/vulnerability/october-2026-security-releases"
+      },
+      {
+        "id": "release",
+        "title": "Node.js 22.23.4 security release notes",
+        "url": "https://nodejs.org/en/blog/release/v22.23.4"
+      },
+      {
+        "id": "docs",
+        "title": "Node.js zlib documentation",
+        "url": "https://nodejs.org/api/zlib.html"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "id": "direct-answer",
+        "text": "What should teams do now?"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Find Node.js services that decompress externally supplied Brotli data, update their actual deployed runtimes to a security release covering CVE-2026-111497, and restart or replace the affected processes. Do not treat an application dependency refresh as evidence that the runtime itself changed. Prioritise reachable data-processing paths, but record the inventory and patch status of other workloads too."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "On 21 October 2026, the Node.js project published security updates for its 22.x, 24.x and 26.x lines. Its advisory describes an out-of-bounds write in the bundled Brotli decoder: attacker-controlled compressed data processed through node:zlib can corrupt memory, with potential crashes, memory disclosure or remote code execution. The project rates this issue high severity. This article does not establish active exploitation or any compromise of a particular organisation."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "advisory"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "why-it-matters",
+        "text": "Why this matters beyond public web servers"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For an Indian SaaS company, an agency operating customer integrations or a college building production-style projects, the useful question is not simply whether a website uses Node.js. It is where untrusted compressed bytes enter a Node process. Background ingestion, partner feeds and file-processing jobs deserve attention alongside public API endpoints. The following workflow is CyberDefend’s defensive recommendation, not a claim that every Node deployment is exploitable."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A runtime finding also crosses team boundaries. A developer may own the code, a platform engineer the container image, and a cloud provider the execution environment. Assign one remediation owner per workload so that a closed dependency ticket is not mistaken for a completed runtime rollout. Include managed services in the register even where your team cannot directly replace the binary."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "technical-boundary",
+        "text": "Understand the decoding boundary"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The advisory attributes the flaw to an invalid decoder state being treated as a request for more input, rather than a permanent format error. Continued input can then overrun an internal buffer. This is a native memory-safety problem, not an ordinary JavaScript exception. The stated exposure condition involves supplying Brotli data that the application decompresses; merely serving precompressed static assets is not proof that this decoding path is reachable."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "advisory"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Node’s zlib module exposes both streaming and convenience Brotli decompression interfaces. Review uses of createBrotliDecompress, brotliDecompress and brotliDecompressSync, then inspect wrappers and libraries that invoke decompression indirectly. The API documentation is useful for distinguishing decoding from encoding and understanding which operation a component performs."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "docs"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Illustrative example: a reporting worker downloads a supplier export and hands compressed content to a decoder before validating the report schema. The report may fail business validation later, but decoding has already occurred. A review should therefore trace bytes from their source through each transformation, rather than start and end with the final JSON validator. This is a hypothetical architecture, not an observed incident."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "inventory",
+        "text": "Build an exposure inventory"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For each workload, record the service owner, environment, runtime distribution, exact runtime version, deployment image or package identifier, ingress source and whether Brotli decoding is reachable. Distinguish confirmed exposure from unknown exposure. A component whose behaviour has not been inspected should not silently become a negative finding."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Use source search as a starting point, then check framework configuration and integration behaviour. Include jobs that fetch URLs, accept uploads, consume queues or process compressed partner data. Ask whether the sender controls the bytes, whether authentication limits access, and which identity the worker uses. Authentication can narrow who reaches a path; it does not repair the decoder."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "patch",
+        "text": "Patch the running artefact, not just the repository"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The official Node.js 22.23.4 release notes explicitly list the Brotli fix and date that security release to 21 October 2026. That is a verified fixed release for the 22.x line, not a universal target for every application. For other supported lines or vendor distributions, use the corresponding vendor security release and check for subsequent fixes. Do not infer safety for unsupported versions from their absence in a supported-release table."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "release"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Our recommended rollout is to update the runtime source used by the deployment, rebuild the artefact, test it, and replace running instances. Record the resulting image digest or equivalent immutable identifier. Check the runtime inside the deployed workload, not only on an engineer’s laptop or CI runner. Confirm that scheduled jobs and less frequently used workers receive the same change."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For provider-managed runtimes, obtain the provider’s patch status and deployment instructions. Separate build-time Node from the runtime that executes requests. A successful build does not demonstrate which binary is serving users. Where compatibility prevents an immediate rollout, document the temporary restriction, its owner and expiry, and keep the upgrade work open."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "containment",
+        "text": "Use temporary controls with explicit limits"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "If patching must wait, consider disabling the specific untrusted Brotli-processing feature or rejecting that encoding before it reaches the affected decoder. Validate the whole path: a proxy or client library may transform content before application code sees it. Avoid assuming that changing an outbound compression preference guarantees that all received input will use a different encoding."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Treat input size limits, timeouts, worker isolation, restricted service credentials and constrained outbound access as layered risk reduction. They are not demonstrated fixes for this memory-corruption flaw. Do not weaken TLS verification or introduce a trust-all network client as a workaround for unrelated compatibility failures encountered during the runtime upgrade."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "investigation",
+        "text": "Collect evidence without overstating detection"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Review process crashes, restart bursts and decoder failures around relevant ingestion activity. Correlate application request identifiers with platform logs, upstream sources and deployment history. These are investigation leads, not vulnerability-specific indicators: a crash can have many causes, and successful abuse need not produce an obvious crash."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Preserve useful logs before retention windows expire. If suspicious activity is found, involve the incident-response owner and assess the process’s accessible secrets and data. Avoid indiscriminate logging of compressed payloads, access tokens or customer records. Diagnostic memory captures may contain sensitive information, so restrict access and use your organisation’s evidence-handling procedures."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "closure",
+        "text": "Define a defensible completion check"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Close the change only when the owner can show the updated running version, replacement of old instances, successful representative workflows and a record of any remaining exceptions. Test normal compressed inputs and expected rejection behaviour in an authorised staging environment; do not send exploit payloads to production or third-party systems."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For learners, turn this into an inventory-and-remediation exercise: document a hypothetical ingestion boundary, identify the runtime owner and define the evidence needed for closure. The transferable skill is proving that a vulnerable component has been removed from a reachable execution path—not merely recognising a CVE number."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Explore CyberDefend’s "
+          },
+          {
+            "text": "hands-on lab learning",
+            "internal": "labs"
+          },
+          {
+            "text": " or "
+          },
+          {
+            "text": "professional training domains",
+            "internal": "programmes"
+          },
+          {
+            "text": " to discuss structured practice in defensive engineering. Programme scope and lab access are confirmed separately."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "connectwise-cloud-backup-microsoft-365-response-guide",
     "title": "ConnectWise Cloud Backup Incident: Microsoft 365 Response Guide",
     "description": "A practical response guide for investigating ConnectWise Cloud Backup application activity, persistence and exposure in Microsoft 365 tenants.",
