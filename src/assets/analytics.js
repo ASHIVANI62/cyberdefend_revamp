@@ -46,7 +46,8 @@
   panel.hidden = true;
   document.body.append(panel);
   const settings = document.querySelector('[data-analytics-settings]');
-  settings?.addEventListener('click', () => { panel.hidden = false; panel.querySelector('button').focus(); });
+  let openedFromSettings = false;
+  settings?.addEventListener('click', () => { openedFromSettings = true; panel.hidden = false; panel.querySelector('button').focus({ preventScroll: true }); });
   panel.addEventListener('click', e => {
     const button = e.target.closest('[data-choice]');
     if (!button) return;
@@ -54,7 +55,10 @@
     document.cookie = key + '=' + value + '; Max-Age=15552000; Path=/; Domain=cyberdefend.in; Secure; SameSite=Lax';
     value === 'accepted' ? enable() : disable();
     panel.hidden = true;
-    settings?.focus();
+    // Restore focus only when preferences were explicitly opened from the footer.
+    // Never scroll the page when closing the initial consent banner.
+    if (openedFromSettings) settings?.focus({ preventScroll: true });
+    openedFromSettings = false;
   });
   if (choice() === 'accepted') enable();
   else if (choice() !== 'declined') panel.hidden = false;
