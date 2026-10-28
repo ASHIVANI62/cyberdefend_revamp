@@ -1,5 +1,296 @@
 [
   {
+    "slug": "firefox-october-2026-security-updates-enterprise-checklist",
+    "title": "Firefox October 2026 Security Updates: Enterprise Checklist",
+    "description": "A practical guide to Mozilla’s 27 October Firefox security fixes: identify browser channels, deploy updates, verify restarts and investigate suspicious activity.",
+    "summary": "Mozilla’s latest Firefox advisories make browser patching a timely priority. Here is how to turn an update notification into a verified, evidence-based endpoint response.",
+    "datePublished": "2026-10-28",
+    "dateModified": "2026-10-28",
+    "author": "CyberDefend",
+    "category": "Endpoint security",
+    "sources": [
+      {
+        "id": "release",
+        "title": "Mozilla MFSA 2026-118: Firefox 159 security fixes, 27 October 2026",
+        "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2026-118/"
+      },
+      {
+        "id": "esr",
+        "title": "Mozilla MFSA 2026-120: Firefox ESR 153.6 security fixes, 27 October 2026",
+        "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2026-120/"
+      },
+      {
+        "id": "older",
+        "title": "Mozilla MFSA 2026-119: Firefox ESR 115.44 security fixes, 27 October 2026",
+        "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2026-119/"
+      },
+      {
+        "id": "update",
+        "title": "Mozilla Support: Update Firefox to the latest release",
+        "url": "https://support.mozilla.org/en-US/kb/update-firefox-latest-release"
+      },
+      {
+        "id": "origin",
+        "title": "MDN: Same-origin policy",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "id": "what-changed",
+        "text": "What changed, and what should you do?"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Identify every deployed Firefox channel, install its applicable security update, and verify the running version after a restart. Mozilla announced Firefox 159 on 27 October 2026 with a high-impact security advisory. Examples include CVE-2026-117860, a same-origin policy bypass, and CVE-2026-117861, a sandbox escape, both in DOM: Navigation. These are reasons to review browser exposure, not proof that your organisation has been compromised. "
+          },
+          {
+            "text": "Read Mozilla’s Firefox advisory.",
+            "source": "release"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Mozilla separately identifies Firefox ESR 153.6 as a fixed release in its high-impact advisory published the same day. Extended Support Release is a separate update track: do not compare its version number numerically against the mainstream release and conclude it is unpatched. "
+          },
+          {
+            "text": "Check the ESR 153.6 advisory.",
+            "source": "esr"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A further advisory identifies Firefox ESR 115.44 as a fixed release. Use this only for installations on that applicable branch; it is not a recommendation to move modern endpoints to an older track. The versions here are the fixes named in these advisories, not a claim that every historical version is affected by every listed CVE. "
+          },
+          {
+            "text": "Review the ESR 115.44 advisory.",
+            "source": "older"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "business-exposure",
+        "text": "Why browser security is a business issue"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For an Indian services company, university lab or distributed engineering team, a browser may be the working interface to email, source repositories, finance portals and cloud administration. Treat it as a business application with an owner, an inventory and a patch deadline. An endpoint can be well managed at operating-system level while a second browser installation remains outside the normal update process."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Our recommended prioritisation is based on access and exposure: start with administrators, helpdesk staff and employees who routinely handle external content, then extend to the full fleet. Include shared lab machines, remote desktops and contractor devices covered by your management agreement. This is a risk-based rollout suggestion, not evidence of an attack targeting those groups."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "security-boundaries",
+        "text": "Understand the boundaries the fixes protect"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The same-origin policy limits how documents or scripts from one origin interact with resources from another. An origin normally combines scheme, host and port. This separation matters when a user has several unrelated services open: sharing a browser does not mean those websites should share access to each other’s data. "
+          },
+          {
+            "text": "MDN explains the same-origin policy and its exceptions.",
+            "source": "origin"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A sandbox is another boundary, intended to constrain what less-trusted browser activity can do. A same-origin bypass and a sandbox escape are therefore different classes of failure. Neither advisory label alone tells defenders the complete conditions required for a successful attack. Avoid inventing an exploit chain, assuming a single page necessarily compromises a device, or treating every listed memory bug as identical."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The Firefox advisory also lists CVE-2026-117865, a use-after-free in JavaScript garbage collection. At a conceptual level, use-after-free means software uses memory after its valid lifetime has ended. The consequences depend on context. The advisory’s severity and fixed-release information should guide patching without requiring your team to reproduce the flaw. "
+          },
+          {
+            "text": "Consult the vendor’s individual vulnerability entries.",
+            "source": "release"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "inventory",
+        "text": "Build an inventory that can prove coverage"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Before deployment, create one tracking record per device and installation. Record the asset owner, operating system, browser channel, installation path, observed version, update mechanism and last check-in. Distinguish a machine that is compliant from one that simply has no recent telemetry. Also identify who can remediate failures: endpoint operations, a lab administrator or the individual device owner."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Look beyond the default browser. Developer machines may contain multiple installations; virtual desktop images may repeatedly recreate an old package; disconnected training systems may miss routine updates. These are inventory hypotheses to check, not findings about your environment. For a small organisation, a controlled spreadsheet with evidence links can be more useful than a sophisticated dashboard with an unknown denominator."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "rollout",
+        "text": "Deploy, restart and verify"
+      },
+      {
+        "type": "list",
+        "items": [
+          [
+            {
+              "text": "Confirm the installation channel. Match each asset to its vendor advisory and your approved software source. Keep mainstream and ESR tracking separate."
+            }
+          ],
+          [
+            {
+              "text": "Pilot the update on representative devices. Check essential workflows such as sign-in, file upload, video meetings and required extensions. Record specific failures rather than delaying the whole rollout on an untested concern."
+            }
+          ],
+          [
+            {
+              "text": "Schedule a clear restart window. Ask users to save work and close active sessions normally. An installer’s successful exit is not sufficient evidence that the browser currently in use has changed."
+            }
+          ],
+          [
+            {
+              "text": "Recheck the running version and fleet telemetry. Retain the observed version, timestamp and device identity. Reconcile failed installations, offline machines and unresolved restart requirements."
+            }
+          ],
+          [
+            {
+              "text": "Assign exceptions an owner and expiry. Where patching is blocked, document the reason and temporary exposure reduction. Do not label an exception as remediated."
+            }
+          ]
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For Mozilla-installed Firefox, the About Firefox workflow checks for updates; Mozilla says updates apply after restarting. Its support instructions distinguish Linux distribution packages and Microsoft Store installations, which use their respective update mechanisms. Follow the applicable management path rather than distributing an arbitrary installer over an existing managed package. "
+          },
+          {
+            "text": "Follow Mozilla’s update instructions.",
+            "source": "update"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "detection",
+        "text": "What should the security team investigate?"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Keep patch compliance and incident detection as separate workstreams. For compliance, investigate stale versions, repeated update failures and machines that stopped reporting. For possible compromise, correlate endpoint alerts with browser process activity, unexpected downloads, unusual child processes and suspicious account sessions. Tune these checks to your environment: legitimate developer tools and integrations can produce unusual process relationships."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "These are behavioural investigation ideas, not vendor-issued indicators for the listed CVEs. A crash is not proof of exploitation, and a clean alert dashboard is not proof that exploitation was impossible. If credible evidence emerges, preserve relevant endpoint and identity logs, follow your incident-response procedure and scope affected accounts. Updating software addresses the vulnerable component; it does not itself establish whether earlier activity was harmless."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "learning-exercise",
+        "text": "A safe exercise for early-career security teams"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Illustrative exercise: give a trainee a small authorised test fleet with mixed update channels. Ask them to prepare an inventory, map each installation to an advisory, carry out approved updates and produce before-and-after evidence. Include a deliberately offline test device so they learn to distinguish unknown status from success. No exploit code or malicious website is needed."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The useful deliverable is a short change record: scope, source references, observed versions, compatibility results, restart confirmation and unresolved exceptions. A reviewer should be able to repeat the verification from the record. This develops the operational discipline shared by vulnerability management, endpoint engineering and SOC work."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "limits",
+        "text": "Limitations and takeaways"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects vendor material reviewed on 28 October 2026. The cited advisories establish published fixes and vulnerability descriptions; they are not a basis for claiming active exploitation or a confirmed incident at any organisation. Check for newer vendor updates before acting, particularly if your deployment occurs later. Do not infer a complete affected-version range from a fixed-version heading alone."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The practical goal is verified coverage: know what you run, update through a trusted channel, restart, and resolve the exceptions. Measure success against the full inventory, not just the devices that responded first. Teams that make this routine are better prepared for the next browser advisory without needing to manufacture urgency."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For structured practice, explore CyberDefend Academy’s "
+          },
+          {
+            "text": "professional programmes",
+            "internal": "programmes"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "text": "hands-on labs",
+            "internal": "labs"
+          },
+          {
+            "text": ". Use authorised environments to build evidence-based defensive skills."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "nodejs-brotli-cve-2026-111497-response-checklist",
     "title": "Node.js Brotli CVE-2026-111497: A Runtime Response Checklist",
     "description": "Assess Node.js Brotli exposure, patch deployed runtimes and investigate decoder crashes with a practical checklist for engineering and security teams.",
