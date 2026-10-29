@@ -1,5 +1,264 @@
 [
   {
+    "slug": "jenkins-october-2026-security-update-permissions-checklist",
+    "title": "Jenkins October 2026 Security Update: Permissions Checklist",
+    "description": "Respond to Jenkins’ 28 October advisory with a core upgrade, permission review, safe validation and an evidence-based CI/CD security checklist.",
+    "summary": "Update Jenkins core, then verify who can configure jobs and agents. This guide separates confirmed advisory details from practical recommendations for protecting delivery infrastructure.",
+    "author": "CyberDefend",
+    "datePublished": "2026-10-29",
+    "dateModified": "2026-10-29",
+    "category": "CI/CD security",
+    "sources": [
+      {
+        "id": "advisory",
+        "title": "Jenkins Security Advisory, 28 October 2026",
+        "url": "https://www.jenkins.io/security/advisory/2026-10-28/"
+      },
+      {
+        "id": "security",
+        "title": "Jenkins documentation: Securing Jenkins",
+        "url": "https://www.jenkins.io/doc/book/security/securing-jenkins/"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "id": "immediate-action",
+        "text": "The immediate action"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Jenkins published a core security advisory on 28 October 2026. It identifies weekly releases through 2.587 and LTS releases through 2.580.1 as affected, unless an individual entry says otherwise. The fixed releases are weekly 2.588 and LTS 2.580.2. Match your installation to its release track and upgrade through your approved process."
+          },
+          {
+            "text": " Read the official guidance.",
+            "source": "advisory"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Do not stop at checking the version displayed in a dashboard. Identify every controller, confirm the running version after maintenance, and review the permissions that govern configuration changes. The following operational checklist is CyberDefend’s recommended response, not a claim that an incident has occurred at your organisation."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "confirmed-issue",
+        "text": "What the advisory confirms"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "One high-severity issue, CVE-2026-117612, involves XStream deserialization: the filter did not cover classes referenced by the resolves-to attribute. Potential remote code execution requires Overall/Read plus either a non-anonymous user account or permissions permitting a config.xml POST. The fix extends filtering and adds XStream type-permission enforcement. Another issue, CVE-2026-117613, permits stored XSS through crafted job configuration by users with Item/Configure. The update adds collection-element type validation."
+          },
+          {
+            "text": " Read the official guidance.",
+            "source": "advisory"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "These are examples from a broader advisory, not its complete vulnerability list. The important defensive distinction is between being able to log in and being authorised to change sensitive state. Avoid describing the first issue as an unrestricted anonymous attack, or assuming that only administrators matter."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "why-it-matters",
+        "text": "Why delivery infrastructure deserves attention"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A CI/CD service can connect source code, build environments and deployment workflows. Its importance depends on the actual access it holds, not whether employees describe it as an internal tool. For a services business supporting several clients, map each controller to the projects and environments it can reach. A shared platform may have a different consequence profile from a disposable teaching lab."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Treat that mapping as an investigation, not an assumption. Record whether production credentials are available, whether builds accept contributions from outside the organisation, and who controls agent configuration. Where ownership is unclear, assign a platform owner before declaring the upgrade complete. Vulnerability response becomes unreliable when every team assumes another team manages the service."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "access-review",
+        "text": "Separate authentication from authorisation"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Jenkins documents two independent access-control choices: the security realm identifies users and groups, while the authorisation strategy determines their permissions. Authenticating through a corporate directory does not, by itself, establish a least-privilege configuration. The documentation also distinguishes user access from what builds can do."
+          },
+          {
+            "text": " Read the official guidance.",
+            "source": "security"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Our recommendation is to review effective permissions rather than group names alone. A group called developers might be narrow or extremely powerful depending on inherited grants. Check ordinary users, service accounts, external collaborators and anonymous access. Record why each configuration permission is needed and who approved it. Remove unnecessary access through the normal change process, retaining an audit trail."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Pay particular attention to dormant accounts and integration identities whose original purpose is no longer understood. Do not disable all automation accounts indiscriminately: identify their owners and dependencies first. For a small team, a short permission matrix reviewed by two people can expose more actionable problems than a long policy document nobody compares with the running configuration."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "upgrade-plan",
+        "text": "A controlled upgrade plan"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "First, inventory controllers with their release track, current version, installation method, plugin set and responsible team. Include development and recovery instances if they remain reachable. A retired controller that is still running should not disappear from the denominator simply because it no longer builds the main product."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Second, prepare a protected backup and a documented recovery procedure appropriate to your deployment. Confirm that someone can operate that procedure; do not discover during maintenance that only an unavailable administrator understands it. Handle backed-up configuration as sensitive material and keep it out of public issue attachments."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Third, validate the change in a representative non-production environment where feasible. Test sign-in, permissions, agent connections and a harmless pipeline that exercises the organisation’s normal build path. Use test credentials and controlled destinations. The purpose is compatibility and control verification, not reproducing an exploit."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Fourth, schedule maintenance, communicate build interruptions and deploy the applicable fixed release. After restart, check the version actually running, confirm expected agent behaviour and rerun the approved smoke tests. Preserve concise evidence for each controller rather than marking the whole fleet complete from a single successful example."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "exceptions",
+        "text": "Handle compatibility exceptions carefully"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The advisory describes compatibility switches for some new checks. They should not become a routine shortcut for making an upgrade appear successful. If validation fails, capture the failure, identify the affected workflow and investigate with the relevant maintainers. Document any proposed exception and its security implications before making a decision."
+          },
+          {
+            "text": " Read the official guidance.",
+            "source": "advisory"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "As an operational rule, give each unresolved exception an owner, a review date and a clear scope. Consider reducing exposure or suspending the affected workflow while investigating. A patch installed with an important safeguard suppressed is a different state from a fully validated deployment; report that distinction explicitly to stakeholders."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "investigation",
+        "text": "Look for evidence, not just alerts"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Review available controller, proxy and identity logs for unexpected configuration changes, unfamiliar accounts and agent changes outside approved windows. Correlate those events with change tickets and build activity. These are general investigation suggestions, not published indicators of compromise for the listed vulnerabilities."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Missing logs limit what you can conclude. Absence of an alert does not prove that earlier activity was safe, and a failed build does not establish exploitation. If evidence suggests unauthorised access, preserve relevant records and follow your incident-response process. Scope credentials and downstream systems according to demonstrated access rather than rotating unrelated secrets without a plan."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "learning",
+        "text": "A useful exercise for learners"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Illustrative exercise: in an authorised disposable lab, ask an intern to inventory a controller, explain its authentication and authorisation settings, and prepare an upgrade checklist. Have a reviewer verify that a test account has only its intended permissions. Use synthetic jobs and no customer data. The deliverable should include observations, evidence and unresolved questions—not exploit payloads."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "takeaways",
+        "text": "Takeaways and limitations"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects material reviewed on 29 October 2026. It does not establish active exploitation or claim firsthand testing of the vulnerabilities. Recheck the vendor advisory before deployment and assess every applicable entry, not only the two examples above. Successful response means a verified running version, justified permissions and documented exceptions."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For structured defensive practice, explore CyberDefend Academy’s "
+          },
+          {
+            "text": "professional programmes",
+            "internal": "programmes"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "text": "hands-on labs",
+            "internal": "labs"
+          },
+          {
+            "text": ". Build the habit of explaining what your evidence proves—and what it does not."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "firefox-october-2026-security-updates-enterprise-checklist",
     "title": "Firefox October 2026 Security Updates: Enterprise Checklist",
     "description": "A practical guide to Mozilla’s 27 October Firefox security fixes: identify browser channels, deploy updates, verify restarts and investigate suspicious activity.",
