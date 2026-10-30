@@ -1,5 +1,263 @@
 [
   {
+    "slug": "google-cloud-security-bulletins-no-customer-action-response",
+    "title": "Google Cloud Security Bulletins: What “No Action Required” Means",
+    "description": "How to handle provider-patched cloud vulnerabilities: verify scope, document ownership, assess evidence and avoid unnecessary emergency changes.",
+    "summary": "Two recent Google Cloud bulletins illustrate an important distinction: a provider can fix a platform vulnerability without requiring customer patching. Here is how to close the response responsibly.",
+    "author": "CyberDefend",
+    "datePublished": "2026-10-30",
+    "dateModified": "2026-10-30",
+    "category": "Cloud security",
+    "sources": [
+      {
+        "id": "bulletins",
+        "title": "Google Cloud security bulletins GCP-2026-074 and GCP-2026-073",
+        "url": "https://docs.cloud.google.com/support/bulletins"
+      },
+      {
+        "id": "logs",
+        "title": "Google Cloud: Cloud Audit Logs overview",
+        "url": "https://docs.cloud.google.com/logging/docs/audit"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "heading",
+        "id": "answer",
+        "text": "The short answer"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "When a cloud provider explicitly says no customer action is required for a vulnerability, do not invent a patching task. Verify that the statement applies to the service you use, record the provider’s remediation and close the vulnerability-management task with evidence. Separately, continue normal identity, configuration and monitoring work. A provider patch and a customer security review answer different questions."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Google Cloud’s GCP-2026-074, published on 28 October 2026, describes CVE-2026-93327 in Application Integration’s SubWorkflow task before 11 September 2026. It rates the issue Critical, describes possible arbitrary code execution by an authenticated user through crafted serialized data, and says it was patched on 11 September with no customer action required."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "bulletins"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "GCP-2026-073, published on 26 October, describes CVE-2026-85299: an incorrect-authorisation issue in Compute Engine before 31 August 2026 that could expose disk data without the required IAM permissions. Google rates it High and states it was patched on 31 August, with no action required from customers."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "bulletins"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "dates",
+        "text": "Separate disclosure, remediation and investigation"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "These examples show why the publication date should not automatically become the start of an emergency maintenance window. A bulletin can be published after the platform has been corrected. Record the disclosure date and remediation date separately so that colleagues do not mistake a newly published description for an unfixed condition."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Neither cited bulletin establishes that your organisation was attacked. Equally, a remediation statement alone does not reconstruct every historical event in your tenant. Treat vulnerability status and incident status as separate records. The first concerns whether the described weakness remains; the second concerns whether available evidence indicates unauthorised activity."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "scope",
+        "text": "Start with scope, not severity alone"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Our recommended first step is to identify whether the named service is actually in use. Ask the application or platform owner, consult the cloud inventory and record relevant project identifiers. Do not infer exposure from an invoice containing the provider’s name. A company may use several managed services without using the component named in a particular bulletin."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For an Indian consultancy managing several customer environments, keep each customer’s assessment separate. One project’s service usage does not prove another project’s exposure. Avoid collecting customer data into an informal shared spreadsheet; store the minimum required assessment evidence in an approved system with appropriate access controls."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Next, compare the provider’s remediation instructions with your deployment model. A managed service, a virtual machine’s guest operating system and a container image are different maintenance surfaces. Do not extend a no-action statement about one platform component to all software hosted nearby. Document the exact component covered and leave unrelated patch obligations unchanged."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "ownership",
+        "text": "Create a short ownership record"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A useful response record contains the bulletin identifier, source URL, date reviewed, affected service, business owner, remediation statement and decision. Add a sentence explaining why the decision applies to your environment. This is more defensible than closing a ticket with the words cloud provider issue and no supporting context."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Use explicit outcomes: not used, provider-remediated, customer action required, or unresolved scope. Assign unresolved items to someone who can answer them. Unknown is not equivalent to safe, but it also is not proof of compromise. A clear classification prevents urgent work from being confused with routine housekeeping."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Have the service owner confirm the scope and the security owner confirm the interpretation. For a small business, these may be the same person, but the two questions should still be asked. If a vendor statement is ambiguous, use the supported customer-support channel rather than guessing a version threshold or modifying production settings experimentally."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "evidence",
+        "text": "Understand what audit evidence can tell you"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Google describes Cloud Audit Logs as records of administrative activities and resource access. Its overview distinguishes Admin Activity, Data Access, System Event and Policy Denied logs. Admin Activity logs record configuration or metadata changes and are always generated. The documentation also explains that ordinary Logs Viewer access does not include Data Access logs in the default bucket; additional permissions are required."
+          },
+          {
+            "text": " Read the primary source.",
+            "source": "logs"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Before interpreting an empty search, establish which project, service, log category and period were queried. Confirm that the investigator has access to the relevant records. A result containing no matching entries may reflect the query, coverage or permissions rather than the absence of unwanted behaviour. Record these limits in the case notes."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Where a review is justified by risk or suspicious activity, correlate administrative changes with approved changes and identity activity. Look for unfamiliar principals, unexplained resource changes and access inconsistent with business use. These are general investigative suggestions, not indicators published for the two CVEs. Do not present them as a validated detection rule."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "avoid-disruption",
+        "text": "Avoid security work that creates unnecessary disruption"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "A severe rating can encourage teams to reboot systems, rotate every credential or disable integrations immediately. Those actions may be appropriate in a confirmed incident, but their costs and dependencies should be justified. For these provider-remediated bulletins, neither a tenant-wide shutdown nor indiscriminate credential rotation follows from the published no-action instruction."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Instead, maintain a separate improvement backlog. Excessive permissions, unclear service ownership and missing review procedures deserve attention on their own merits. Label them accurately as control improvements, not mandatory fixes for a vulnerability that the provider says it has already addressed. This keeps operational teams from losing trust in security requests."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "exercise",
+        "text": "A practical exercise for early-career analysts"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Illustrative exercise: give a trainee a public cloud bulletin and a synthetic inventory containing several projects and services. Ask them to classify relevance, distinguish disclosure from remediation dates, and write a short closure rationale. Include one project with unknown ownership so they practise escalation rather than inventing a conclusion."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "Then provide a small set of synthetic audit events and ask what the evidence supports. A good answer should identify both observations and blind spots. No exploit reproduction, live customer data or production changes are needed. Review the trainee’s reasoning, not merely whether they marked the ticket closed."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "id": "takeaways",
+        "text": "What responsible closure looks like"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "The strongest closure is specific: the relevant service was checked, the provider’s stated remediation was recorded, no customer patch was prescribed, and any remaining uncertainty has an owner. Keep a link to the advisory so later updates can be compared with the original decision. This makes the assessment reproducible without adding unnecessary maintenance."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "This article reflects material reviewed on 30 October 2026. It does not claim active exploitation, tenant compromise or firsthand testing. Recheck current vendor guidance before taking action. Cloud security response is not measured by the number of emergency changes made; it is measured by whether decisions match the affected component, the available evidence and the documented responsibilities."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "text": "For guided defensive learning, explore CyberDefend Academy’s "
+          },
+          {
+            "text": "professional programmes",
+            "internal": "programmes"
+          },
+          {
+            "text": " and "
+          },
+          {
+            "text": "hands-on labs",
+            "internal": "labs"
+          },
+          {
+            "text": ". Practise turning advisories into clear, evidence-based decisions."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "slug": "jenkins-october-2026-security-update-permissions-checklist",
     "title": "Jenkins October 2026 Security Update: Permissions Checklist",
     "description": "Respond to Jenkins’ 28 October advisory with a core upgrade, permission review, safe validation and an evidence-based CI/CD security checklist.",
